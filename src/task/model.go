@@ -12,9 +12,9 @@ const (
 )
 
 type Task struct {
-	ID          uint64    `json:"id"`
-	Description string    `json:"description"`
-	Status      Status    `json:"status"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	id          uint64    `json:"id"`
+	description string    `json:"description"`
+	status      Status    `json:"status"`
+	createdAt   time.Time `json:"created_at"`
+	updatedAt   time.Time `json:"updated_at"`
 }
