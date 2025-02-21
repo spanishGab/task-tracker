@@ -4,7 +4,7 @@ import "time"
 
 type Status string
 
-// Task statuses
+// Task status
 const (
 	Todo       Status = "todo"
 	InProgress Status = "in-progress"
