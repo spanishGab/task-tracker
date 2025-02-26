@@ -1,41 +1,51 @@
 package cli
 
-import "fmt"
+import (
+	"fmt"
+	"tasktracker/src/commands"
+)
 
-func GetCommandFrom(input []string) (*Command, error) {
+var createInvalidCommandError = func(command string, message string) error {
+	return fmt.Errorf("invalid command %s - %s", command, message)
+
+}
+
+func ReadCommand(input []string) error {
 	inputLength := len(input)
 	if inputLength <= 1 {
-		return nil, errInvalidArgs
+		return commands.ErrInvalidArgs
 	}
 	commandName := input[1]
 
-	var err error
-	var command *Command
+	var command commands.ICommand
 	switch commandName {
-	case Add.String():
+	case commands.AddCommand.String():
 		if inputLength != 3 {
-			return nil, errInvalidArgs
+			return commands.ErrInvalidArgs
 		}
-		command = NewAddCommand()
-		command.SetArgs(input[2:])
-		err = command.ValidateAddArgs()
-	case Update.String():
+		add := commands.NewAddCommand(input[2:])
+		command = add
+	case commands.UpdateCommand.String():
 		if inputLength != 4 {
-			return nil, errInvalidArgs
+			return commands.ErrInvalidArgs
 		}
-		command = NewUpdateCommand()
-		command.SetArgs(input[2:])
-		err = command.ValidateUpdateArgs()
-	case Delete.String():
+		update := commands.NewUpdateCommand(input[2:])
+		command = update
+	case commands.DeleteCommand.String():
 		if inputLength != 3 {
-			return nil, errInvalidArgs
+			return commands.ErrInvalidArgs
 		}
-		command = NewDeleteCommand()
-		command.SetArgs(input[2:])
-		err = command.ValidateDeleteArgs()
+		delete := commands.NewDeleteCommand(input[2:])
+		command = delete
+	default:
+		return createInvalidCommandError(commandName, "unknown command")
 	}
+	result, err := command.Execute()
 	if err != nil {
-		return nil, fmt.Errorf("invalid command entered : %s", err.Error())
+		return createInvalidCommandError(commandName, err.Error())
 	}
-	return command, nil
+	if result != nil {
+		fmt.Println(*result)
+	}
+	return nil
 }
