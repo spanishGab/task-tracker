@@ -16,7 +16,7 @@ func NewDeleteCommand(args []string) *Delete {
 }
 
 func (d *Delete) Execute() (*string, error) {
-	fmt.Printf("executing delete")
+	fmt.Println("executing delete")
 	if err := d.ParseArgs(); err != nil {
 		return nil, fmt.Errorf("error while deleting task: %s", err.Error())
 	}

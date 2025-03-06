@@ -1,0 +1,82 @@
+package tasks
+
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"time"
+)
+
+const (
+	taskCreationFailed string = "error while trying to create task: %s"
+)
+
+type TaskRepository struct {
+	DataSource   string
+	dbConnection io.ReadWriter
+}
+
+func NewTaskRepository(dataSource string, dbConnction io.ReadWriter) *TaskRepository {
+	return &TaskRepository{
+		DataSource:   dataSource,
+		dbConnection: dbConnction,
+	}
+}
+
+func (tr *TaskRepository) CreateOne(task Task) (*Task, error) {
+	tasks, err := tr.getAllTasks()
+	if err != nil {
+		return nil, fmt.Errorf(taskCreationFailed, err.Error())
+	}
+	task.ID = tr.getNextId(tasks)
+	now := time.Now().UTC()
+	task.CreatedAt = now
+	task.UpdatedAt = now
+
+	tasks = append(tasks, task)
+
+	data, err := tr.tasksToBytes(tasks)
+	if err != nil {
+		return nil, fmt.Errorf(taskCreationFailed, err.Error())
+	}
+	if _, err := tr.dbConnection.Write(data); err != nil {
+		return nil, fmt.Errorf(taskCreationFailed, err.Error())
+	}
+	return &task, nil
+}
+
+func (tr *TaskRepository) getAllTasks() ([]Task, error) {
+	var unmarshalledTasks = make([]byte, 0)
+	_, err := tr.dbConnection.Read(unmarshalledTasks)
+	if err != nil {
+		return nil, fmt.Errorf("error while trying to read all tasks: %s", err.Error())
+	}
+	if len(unmarshalledTasks) <= 0 {
+		return []Task{}, nil
+	}
+
+	var tasks []Task
+	err = json.Unmarshal(unmarshalledTasks, &tasks)
+	if err != nil {
+		return nil, fmt.Errorf("error while trying to unmarshal all tasks: %s", err.Error())
+	}
+	return tasks, nil
+}
+
+func (tr *TaskRepository) tasksToBytes(tasks []Task) ([]byte, error) {
+	data, err := json.MarshalIndent(tasks, "", "\t")
+	if err != nil {
+		return nil, fmt.Errorf("error while trying to marshal all tasks: %s", err.Error())
+	}
+	return data, nil
+}
+
+func (tr *TaskRepository) getNextId(tasks []Task) uint64 {
+	var biggestID uint64 = 1
+	for _, task := range tasks {
+		if task.ID > biggestID {
+			biggestID = task.ID
+		}
+	}
+	return biggestID
+}

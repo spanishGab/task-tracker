@@ -2,7 +2,6 @@ package commands
 
 import (
 	"errors"
-	"tasktracker/src/tasks"
 )
 
 var ErrInvalidArgs = errors.New("invalid arguments")
@@ -19,21 +18,15 @@ func (cn CommandName) String() string {
 	return string(cn)
 }
 
-type ICommand interface {
-	Execute() (*string, error)
-}
-
 type Command struct {
 	name CommandName
 	args []string
-	task tasks.Task
 }
 
-func NewCommand(name CommandName, args []string, task tasks.Task) *Command {
+func NewCommand(name CommandName, args []string) *Command {
 	return &Command{
 		name: name,
 		args: args,
-		task: task,
 	}
 }
 
@@ -43,8 +36,4 @@ func (c *Command) Name() CommandName {
 
 func (c *Command) Args() []string {
 	return c.args
-}
-
-func (c *Command) Task() tasks.Task {
-	return c.task
 }

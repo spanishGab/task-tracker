@@ -16,7 +16,7 @@ func NewUpdateCommand(args []string) *Update {
 }
 
 func (u *Update) Execute() (*string, error) {
-	fmt.Printf("executing update")
+	fmt.Println("executing update")
 	if err := u.ParseArgs(); err != nil {
 		return nil, fmt.Errorf("error while updating task: %s", err.Error())
 	}
