@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"tasktracker/src/commands"
+	"tasktracker/src/database"
 	"tasktracker/src/entrypoints/cli"
+	"tasktracker/src/tasks"
 )
 
 func main() {
@@ -13,7 +16,10 @@ func main() {
 		fmt.Println(commands.ErrInvalidArgs)
 		return
 	}
-	if err := cli.ReadCommand(os.Args); err != nil {
+	cwd, _ := os.Getwd()
+	fileHandler := database.NewFileHandler(path.Join(cwd, "..", "db", "tasks.json"))
+	tasksRepository := tasks.NewTaskRepository(fileHandler.FileName, fileHandler)
+	if err := cli.ReadCommand(os.Args, tasksRepository); err != nil {
 		fmt.Println(err)
 	}
 }

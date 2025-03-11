@@ -3,30 +3,28 @@ package tasks
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"time"
-)
+	"slices"
+	"tasktracker/src/ports"
 
-const (
-	taskCreationFailed string = "error while trying to create task: %s"
+	"time"
 )
 
 type TaskRepository struct {
 	DataSource   string
-	dbConnection io.ReadWriter
+	dbConnection ports.IFileHandler
 }
 
-func NewTaskRepository(dataSource string, dbConnction io.ReadWriter) *TaskRepository {
+func NewTaskRepository(dataSource string, dbConnection ports.IFileHandler) *TaskRepository {
 	return &TaskRepository{
 		DataSource:   dataSource,
-		dbConnection: dbConnction,
+		dbConnection: dbConnection,
 	}
 }
 
 func (tr *TaskRepository) CreateOne(task Task) (*Task, error) {
 	tasks, err := tr.getAllTasks()
 	if err != nil {
-		return nil, fmt.Errorf(taskCreationFailed, err.Error())
+		return nil, err
 	}
 	task.ID = tr.getNextId(tasks)
 	now := time.Now().UTC()
@@ -37,17 +35,40 @@ func (tr *TaskRepository) CreateOne(task Task) (*Task, error) {
 
 	data, err := tr.tasksToBytes(tasks)
 	if err != nil {
-		return nil, fmt.Errorf(taskCreationFailed, err.Error())
+		return nil, err
 	}
 	if _, err := tr.dbConnection.Write(data); err != nil {
-		return nil, fmt.Errorf(taskCreationFailed, err.Error())
+		return nil, err
 	}
 	return &task, nil
 }
 
+func (tr *TaskRepository) DeleteOne(id uint64) error {
+	tasks, err := tr.getAllTasks()
+	if err != nil {
+		return err
+	}
+	var taskPosition int
+	for i, task := range tasks {
+		if id == task.ID {
+			taskPosition = i
+			break
+		}
+	}
+	tasks = slices.Delete(tasks, taskPosition, taskPosition+1)
+
+	data, err := tr.tasksToBytes(tasks)
+	if err != nil {
+		return err
+	}
+	if _, err := tr.dbConnection.Write(data); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (tr *TaskRepository) getAllTasks() ([]Task, error) {
-	var unmarshalledTasks = make([]byte, 0)
-	_, err := tr.dbConnection.Read(unmarshalledTasks)
+	unmarshalledTasks, err := tr.dbConnection.Read()
 	if err != nil {
 		return nil, fmt.Errorf("error while trying to read all tasks: %s", err.Error())
 	}
@@ -78,5 +99,6 @@ func (tr *TaskRepository) getNextId(tasks []Task) uint64 {
 			biggestID = task.ID
 		}
 	}
+	biggestID++
 	return biggestID
 }

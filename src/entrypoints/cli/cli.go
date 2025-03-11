@@ -2,13 +2,10 @@ package cli
 
 import (
 	"fmt"
-	"os"
-	"path"
 	"tasktracker/src/commands"
-	"tasktracker/src/database"
-	"tasktracker/src/ports"
-	"tasktracker/src/tasks"
-	usecases "tasktracker/src/useCases"
+	generalports "tasktracker/src/ports"
+	taskports "tasktracker/src/tasks/ports"
+	usecases "tasktracker/src/tasks/useCases"
 )
 
 var createInvalidCommandError = func(command string, message string) error {
@@ -16,19 +13,11 @@ var createInvalidCommandError = func(command string, message string) error {
 
 }
 
-func ReadCommand(input []string) error {
-	cwd, _ := os.Getwd()
-	fileHandler := database.NewFileHandler(path.Join(cwd, "..", "db", "tasks.json"))
-	if err := fileHandler.Open(); err != nil {
-		return fmt.Errorf("failed to open file %s: %s", fileHandler.FileName, err.Error())
-	}
-	defer fileHandler.Close()
-	tasksRepository := tasks.NewTaskRepository(fileHandler.FileName, fileHandler)
-
+func ReadCommand(input []string, tasksRepository taskports.ITaskRepository) error {
 	inputLength := len(input)
 	commandName := input[1]
 
-	var useCase ports.IUseCase
+	var useCase generalports.IUseCase
 	var command commands.Command
 	switch commandName {
 	case commands.AddCommand.String():
@@ -43,12 +32,12 @@ func ReadCommand(input []string) error {
 	// 	}
 	// 	update := commands.NewUpdateCommand(input[2:])
 	// 	useCase = update
-	// case commands.DeleteCommand.String():
-	// 	if inputLength != 3 {
-	// 		return commands.ErrInvalidArgs
-	// 	}
-	// 	delete := commands.NewDeleteCommand(input[2:])
-	// 	useCase = delete
+	case commands.DeleteCommand.String():
+		if inputLength != 3 {
+			return commands.ErrInvalidArgs
+		}
+		command = *commands.NewCommand(commands.DeleteCommand, input[2:])
+		useCase = usecases.NewDeleteTask(tasksRepository)
 	default:
 		return createInvalidCommandError(commandName, "unknown command")
 	}

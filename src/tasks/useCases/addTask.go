@@ -1,17 +1,10 @@
 package usecases
 
 import (
-	"errors"
 	"fmt"
 	"tasktracker/src/commands"
-	"tasktracker/src/ports"
 	"tasktracker/src/tasks"
-)
-
-var ErrInvalidCommand = errors.New("invalid command")
-
-const (
-	taskCreationFailed = "error while adding new task: %s"
+	"tasktracker/src/tasks/ports"
 )
 
 type AddTask struct {
@@ -39,7 +32,7 @@ func (a *AddTask) Execute(command commands.Command) (*string, error) {
 
 func (a *AddTask) parseArgs(command commands.Command) error {
 	if command.Args() == nil || len(command.Args()) != 1 {
-		return ErrInvalidCommand
+		return errInvalidCommand
 	}
 	return nil
 }
