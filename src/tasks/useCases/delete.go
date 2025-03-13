@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"strconv"
 	"tasktracker/src/commands"
+	"tasktracker/src/tasks"
 	"tasktracker/src/tasks/ports"
 )
+
+var deleteResult = "Task deleted successfully"
 
 type DeleteTask struct {
 	repository ports.ITaskRepository
@@ -19,24 +22,24 @@ func NewDeleteTask(repository ports.ITaskRepository) *DeleteTask {
 
 func (d *DeleteTask) Execute(command commands.Command) (*string, error) {
 	fmt.Println("executing delete")
-	taskId, err := d.parseArgs(command)
+	task, err := d.parseArgs(command)
 	if err != nil {
 		return nil, fmt.Errorf(taskDeletionFailed, err.Error())
 	}
-	err = d.repository.DeleteOne(taskId)
+	err = d.repository.DeleteOne(task.ID)
 	if err != nil {
 		return nil, fmt.Errorf(taskDeletionFailed, err.Error())
 	}
-	return nil, nil
+	return &deleteResult, nil
 }
 
-func (d *DeleteTask) parseArgs(command commands.Command) (uint64, error) {
+func (d *DeleteTask) parseArgs(command commands.Command) (*tasks.Task, error) {
 	if command.Args() == nil || len(command.Args()) != 1 {
-		return 0, errInvalidCommand
+		return nil, errInvalidCommand
 	}
 	taskId, err := strconv.ParseUint(command.Args()[0], 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("error while trying to parse argument : %s", err.Error())
+		return nil, fmt.Errorf("error while trying to parse argument : %s", err.Error())
 	}
-	return taskId, nil
+	return &tasks.Task{ID: taskId}, nil
 }

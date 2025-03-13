@@ -2,24 +2,25 @@ package usecases
 
 import (
 	"tasktracker/src/commands"
+	"tasktracker/src/tasks"
 	"tasktracker/src/tasks/ports"
 	"tasktracker/src/tasks/useCases/mocks"
 	"testing"
 )
 
-func TestValidateDeleteArgs(t *testing.T) {
+func TestDeleteTask_parseArgs(t *testing.T) {
 	tests := []struct {
 		name           string
 		args           []string
 		taskRepository ports.ITaskRepository
-		expected       uint64
+		expected       *tasks.Task
 		wantErr        bool
 	}{
 		{
 			name:           "should return no error for valid args",
 			args:           []string{"123"},
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
-			expected:       uint64(123),
+			expected:       &tasks.Task{ID: 123},
 			wantErr:        false,
 		},
 		{
@@ -54,9 +55,7 @@ func TestValidateDeleteArgs(t *testing.T) {
 			deleteTask := NewDeleteTask(test.taskRepository)
 			got, err := deleteTask.parseArgs(*cmd)
 			assertError(t, err, test.wantErr)
-			if got != test.expected {
-				t.Errorf("expected: %d, got: %d", test.expected, got)
-			}
+			assertTask(t, got, test.expected)
 		})
 	}
 }
