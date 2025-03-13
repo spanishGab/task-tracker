@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "./src/main.go",
-            "args": ["delete", "1"]
+            "args": ["update", "2", "Fazer café"]
         }
     ]
 }

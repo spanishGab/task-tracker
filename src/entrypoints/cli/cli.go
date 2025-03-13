@@ -26,12 +26,12 @@ func ReadCommand(input []string, tasksRepository taskports.ITaskRepository) erro
 		}
 		command = *commands.NewCommand(commands.AddCommand, input[2:])
 		useCase = usecases.NewAddTask(tasksRepository)
-	// case commands.UpdateCommand.String():
-	// 	if inputLength != 4 {
-	// 		return commands.ErrInvalidArgs
-	// 	}
-	// 	update := commands.NewUpdateCommand(input[2:])
-	// 	useCase = update
+	case commands.UpdateCommand.String():
+		if inputLength != 4 {
+			return commands.ErrInvalidArgs
+		}
+		command = *commands.NewCommand(commands.UpdateCommand, input[2:])
+		useCase = usecases.NewUpdateTask(tasksRepository)
 	case commands.DeleteCommand.String():
 		if inputLength != 3 {
 			return commands.ErrInvalidArgs

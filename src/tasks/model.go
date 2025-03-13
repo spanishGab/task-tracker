@@ -27,3 +27,9 @@ func NewTask(description string) *Task {
 		Status:      Todo,
 	}
 }
+
+func NewTaskWithId(id uint64, description string) *Task {
+	task := NewTask(description)
+	task.ID = id
+	return task
+}

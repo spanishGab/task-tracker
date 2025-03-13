@@ -67,6 +67,11 @@ func (tr *TaskRepository) DeleteOne(id uint64) error {
 	return nil
 }
 
+func (tr *TaskRepository) UpdateOne(task Task) (*Task, error) {
+	tr.DeleteOne(task.ID)
+	return tr.CreateOne(task)
+}
+
 func (tr *TaskRepository) getAllTasks() ([]Task, error) {
 	unmarshalledTasks, err := tr.dbConnection.Read()
 	if err != nil {
