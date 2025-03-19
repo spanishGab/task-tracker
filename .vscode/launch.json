@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "./src/main.go",
-            "args": ["update", "2", "Fazer café"]
+            "args": ["mark-done", "2"]
         }
     ]
 }

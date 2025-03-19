@@ -37,5 +37,8 @@ func (a *AddTask) parseArgs(command commands.Command) (*tasks.Task, error) {
 	if command.Args() == nil || len(command.Args()) != 1 {
 		return nil, errInvalidCommand
 	}
-	return tasks.NewTask(command.Args()[0]), nil
+	return &tasks.Task{
+		Description: command.Args()[0],
+		Status:      tasks.Done,
+	}, nil
 }

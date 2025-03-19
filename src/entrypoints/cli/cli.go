@@ -19,23 +19,17 @@ func ReadCommand(input []string, tasksRepository taskports.ITaskRepository) erro
 
 	var useCase generalports.IUseCase
 	var command commands.Command
+	if inputLength < 3 {
+		return commands.ErrInvalidArgs
+	}
 	switch commandName {
 	case commands.AddCommand.String():
-		if inputLength != 3 {
-			return commands.ErrInvalidArgs
-		}
 		command = *commands.NewCommand(commands.AddCommand, input[2:])
 		useCase = usecases.NewAddTask(tasksRepository)
-	case commands.UpdateCommand.String():
-		if inputLength != 4 {
-			return commands.ErrInvalidArgs
-		}
-		command = *commands.NewCommand(commands.UpdateCommand, input[2:])
+	case commands.UpdateCommand.String(), commands.MarkDone.String(), commands.MarkInProgress.String():
+		command = *commands.NewCommand(commands.CommandName(commandName), input[2:])
 		useCase = usecases.NewUpdateTask(tasksRepository)
 	case commands.DeleteCommand.String():
-		if inputLength != 3 {
-			return commands.ErrInvalidArgs
-		}
 		command = *commands.NewCommand(commands.DeleteCommand, input[2:])
 		useCase = usecases.NewDeleteTask(tasksRepository)
 	default:

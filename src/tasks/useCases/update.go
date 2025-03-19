@@ -32,12 +32,33 @@ func (u *UpdateTask) Execute(command commands.Command) (*string, error) {
 }
 
 func (u *UpdateTask) parseArgs(command commands.Command) (*tasks.Task, error) {
-	if command.Args() == nil || len(command.Args()) != 2 {
+	if command.Args() == nil || len(command.Args()) < 1 {
 		return nil, errInvalidCommand
 	}
 	taskId, err := strconv.ParseUint(command.Args()[0], 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error while trying to parse argument : %s", err.Error())
 	}
-	return tasks.NewTaskWithId(taskId, command.Args()[1]), nil
+	switch command.Name() {
+	case commands.UpdateCommand:
+		if len(command.Args()) < 2 {
+			return nil, fmt.Errorf("invalid arguments")
+		}
+		return &tasks.Task{
+			ID:          taskId,
+			Description: command.Args()[1],
+		}, nil
+	case commands.MarkInProgress:
+		return &tasks.Task{
+			ID:     taskId,
+			Status: tasks.InProgress,
+		}, nil
+	case commands.MarkDone:
+		return &tasks.Task{
+			ID:     taskId,
+			Status: tasks.Done,
+		}, nil
+	default:
+		return nil, fmt.Errorf("invalid command: %s", command.Name())
+	}
 }

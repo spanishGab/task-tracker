@@ -20,16 +20,3 @@ type Task struct {
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
-
-func NewTask(description string) *Task {
-	return &Task{
-		Description: description,
-		Status:      Todo,
-	}
-}
-
-func NewTaskWithId(id uint64, description string) *Task {
-	task := NewTask(description)
-	task.ID = id
-	return task
-}

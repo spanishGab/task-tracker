@@ -68,8 +68,27 @@ func (tr *TaskRepository) DeleteOne(id uint64) error {
 }
 
 func (tr *TaskRepository) UpdateOne(task Task) (*Task, error) {
-	tr.DeleteOne(task.ID)
-	return tr.CreateOne(task)
+	tasks, err := tr.getAllTasks()
+	if err != nil {
+		return nil, err
+	}
+	for i := range tasks {
+		if tasks[i].ID == task.ID {
+			tasks[i].Description = task.Description
+			tasks[i].Status = task.Status
+			tasks[i].UpdatedAt = time.Now().UTC()
+			break
+		}
+	}
+
+	data, err := tr.tasksToBytes(tasks)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := tr.dbConnection.Write(data); err != nil {
+		return nil, err
+	}
+	return &task, nil
 }
 
 func (tr *TaskRepository) getAllTasks() ([]Task, error) {

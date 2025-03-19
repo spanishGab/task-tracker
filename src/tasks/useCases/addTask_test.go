@@ -20,7 +20,7 @@ func TestAddTask_parseArgs(t *testing.T) {
 			name:           "should return no error for valid args",
 			args:           []string{"arg1"},
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
-			expected:       tasks.NewTask("arg1"),
+			expected:       &tasks.Task{Description: "arg1"},
 			wantErr:        false,
 		},
 		{
