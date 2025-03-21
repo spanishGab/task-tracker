@@ -34,7 +34,9 @@ func (d *DeleteTask) Execute(command commands.Command) (*string, error) {
 }
 
 func (d *DeleteTask) parseArgs(command commands.Command) (*tasks.Task, error) {
-	if command.Args() == nil || len(command.Args()) != 1 {
+	if command.Args() == nil ||
+		len(command.Args()) != 1 ||
+		command.Name() != commands.DeleteCommand {
 		return nil, errInvalidCommand
 	}
 	taskId, err := strconv.ParseUint(command.Args()[0], 10, 64)

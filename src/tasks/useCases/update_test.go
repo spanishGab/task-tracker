@@ -28,7 +28,7 @@ func TestUpdateTask_parseArgs(t *testing.T) {
 		},
 		{
 			name:           "should return no error for valid mark in progress command",
-			command:        commands.NewCommand(commands.MarkInProgress, []string{"123"}),
+			command:        commands.NewCommand(commands.MarkInProgressCommand, []string{"123"}),
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
 			expected: &tasks.Task{
 				ID:     123,
@@ -38,7 +38,7 @@ func TestUpdateTask_parseArgs(t *testing.T) {
 		},
 		{
 			name:           "should return no error for valid mark done command",
-			command:        commands.NewCommand(commands.MarkDone, []string{"123"}),
+			command:        commands.NewCommand(commands.MarkDoneCommand, []string{"123"}),
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
 			expected: &tasks.Task{
 				ID:     123,

@@ -9,11 +9,12 @@ var ErrInvalidArgs = errors.New("invalid arguments")
 type CommandName string
 
 const (
-	AddCommand     CommandName = "add"
-	UpdateCommand  CommandName = "update"
-	DeleteCommand  CommandName = "delete"
-	MarkInProgress CommandName = "mark-in-progress"
-	MarkDone       CommandName = "mark-done"
+	AddCommand            CommandName = "add"
+	UpdateCommand         CommandName = "update"
+	DeleteCommand         CommandName = "delete"
+	MarkInProgressCommand CommandName = "mark-in-progress"
+	MarkDoneCommand       CommandName = "mark-done"
+	ListCommand           CommandName = "list"
 )
 
 func (cn CommandName) String() string {

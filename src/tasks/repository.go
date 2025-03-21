@@ -22,7 +22,7 @@ func NewTaskRepository(dataSource string, dbConnection ports.IFileHandler) *Task
 }
 
 func (tr *TaskRepository) CreateOne(task Task) (*Task, error) {
-	tasks, err := tr.getAllTasks()
+	tasks, err := tr.GetAllTasks()
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (tr *TaskRepository) CreateOne(task Task) (*Task, error) {
 
 	tasks = append(tasks, task)
 
-	data, err := tr.tasksToBytes(tasks)
+	data, err := tr.TasksToBytes(tasks)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (tr *TaskRepository) CreateOne(task Task) (*Task, error) {
 }
 
 func (tr *TaskRepository) DeleteOne(id uint64) error {
-	tasks, err := tr.getAllTasks()
+	tasks, err := tr.GetAllTasks()
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (tr *TaskRepository) DeleteOne(id uint64) error {
 	}
 	tasks = slices.Delete(tasks, taskPosition, taskPosition+1)
 
-	data, err := tr.tasksToBytes(tasks)
+	data, err := tr.TasksToBytes(tasks)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func (tr *TaskRepository) DeleteOne(id uint64) error {
 }
 
 func (tr *TaskRepository) UpdateOne(task Task) (*Task, error) {
-	tasks, err := tr.getAllTasks()
+	tasks, err := tr.GetAllTasks()
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (tr *TaskRepository) UpdateOne(task Task) (*Task, error) {
 		}
 	}
 
-	data, err := tr.tasksToBytes(tasks)
+	data, err := tr.TasksToBytes(tasks)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (tr *TaskRepository) UpdateOne(task Task) (*Task, error) {
 	return &task, nil
 }
 
-func (tr *TaskRepository) getAllTasks() ([]Task, error) {
+func (tr *TaskRepository) GetAllTasks() ([]Task, error) {
 	unmarshalledTasks, err := tr.dbConnection.Read()
 	if err != nil {
 		return nil, fmt.Errorf("error while trying to read all tasks: %s", err.Error())
@@ -108,7 +108,7 @@ func (tr *TaskRepository) getAllTasks() ([]Task, error) {
 	return tasks, nil
 }
 
-func (tr *TaskRepository) tasksToBytes(tasks []Task) ([]byte, error) {
+func (tr *TaskRepository) TasksToBytes(tasks []Task) ([]byte, error) {
 	data, err := json.MarshalIndent(tasks, "", "\t")
 	if err != nil {
 		return nil, fmt.Errorf("error while trying to marshal all tasks: %s", err.Error())

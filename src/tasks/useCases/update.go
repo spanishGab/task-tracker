@@ -26,7 +26,10 @@ func (u *UpdateTask) Execute(command commands.Command) (*string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error while updating task: %s", err.Error())
 	}
-	updatedTask, _ := u.repository.UpdateOne(*task)
+	updatedTask, err := u.repository.UpdateOne(*task)
+	if err != nil {
+		return nil, fmt.Errorf(taskUpdateFailed, err.Error())
+	}
 	result := fmt.Sprintf(updateResult, updatedTask.ID)
 	return &result, nil
 }
@@ -48,17 +51,17 @@ func (u *UpdateTask) parseArgs(command commands.Command) (*tasks.Task, error) {
 			ID:          taskId,
 			Description: command.Args()[1],
 		}, nil
-	case commands.MarkInProgress:
+	case commands.MarkInProgressCommand:
 		return &tasks.Task{
 			ID:     taskId,
 			Status: tasks.InProgress,
 		}, nil
-	case commands.MarkDone:
+	case commands.MarkDoneCommand:
 		return &tasks.Task{
 			ID:     taskId,
 			Status: tasks.Done,
 		}, nil
 	default:
-		return nil, fmt.Errorf("invalid command: %s", command.Name())
+		return nil, errInvalidCommand
 	}
 }

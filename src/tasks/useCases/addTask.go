@@ -34,7 +34,9 @@ func (a *AddTask) Execute(command commands.Command) (*string, error) {
 }
 
 func (a *AddTask) parseArgs(command commands.Command) (*tasks.Task, error) {
-	if command.Args() == nil || len(command.Args()) != 1 {
+	if command.Args() == nil ||
+		len(command.Args()) != 1 ||
+		command.Name() != commands.AddCommand {
 		return nil, errInvalidCommand
 	}
 	return &tasks.Task{

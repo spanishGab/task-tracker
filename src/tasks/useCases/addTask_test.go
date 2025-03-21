@@ -11,6 +11,7 @@ import (
 func TestAddTask_parseArgs(t *testing.T) {
 	tests := []struct {
 		name           string
+		cmdName        commands.CommandName
 		args           []string
 		taskRepository ports.ITaskRepository
 		expected       *tasks.Task
@@ -18,25 +19,36 @@ func TestAddTask_parseArgs(t *testing.T) {
 	}{
 		{
 			name:           "should return no error for valid args",
+			cmdName:        "add",
 			args:           []string{"arg1"},
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
 			expected:       &tasks.Task{Description: "arg1"},
 			wantErr:        false,
 		},
 		{
+			name:           "should return an error for invalid command name",
+			cmdName:        "create",
+			args:           []string{"123"},
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			wantErr:        true,
+		},
+		{
 			name:           "should return an error for no args",
+			cmdName:        "add",
 			args:           []string{},
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
 			wantErr:        true,
 		},
 		{
 			name:           "should return an error for nil args",
+			cmdName:        "add",
 			args:           nil,
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
 			wantErr:        true,
 		},
 		{
 			name:           "should return an error for multiple args",
+			cmdName:        "add",
 			args:           []string{"arg1", "arg2"},
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
 			wantErr:        true,
@@ -45,7 +57,7 @@ func TestAddTask_parseArgs(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			cmd := commands.NewCommand("add", test.args)
+			cmd := commands.NewCommand(test.cmdName, test.args)
 			addTask := NewAddTask(test.taskRepository)
 			got, err := addTask.parseArgs(*cmd)
 			assertError(t, err, test.wantErr)
