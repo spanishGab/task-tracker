@@ -41,6 +41,6 @@ func (a *AddTask) parseArgs(command commands.Command) (*tasks.Task, error) {
 	}
 	return &tasks.Task{
 		Description: command.Args()[0],
-		Status:      tasks.Done,
+		Status:      tasks.Todo,
 	}, nil
 }

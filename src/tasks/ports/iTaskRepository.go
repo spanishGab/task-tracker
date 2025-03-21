@@ -7,5 +7,6 @@ type ITaskRepository interface {
 	DeleteOne(id uint64) error
 	UpdateOne(task tasks.Task) (*tasks.Task, error)
 	GetAllTasks() ([]tasks.Task, error)
-	TasksToBytes(tasks []tasks.Task) ([]byte, error)
+	GetAllTasksByStatus(status tasks.Status) ([]tasks.Task, error)
+	Format(tasks []tasks.Task) ([]byte, error)
 }

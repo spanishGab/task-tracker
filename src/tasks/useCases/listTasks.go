@@ -17,23 +17,27 @@ func NewListTask(repository ports.ITaskRepository) *ListTask {
 	}
 }
 
-func (a *ListTask) Execute(command commands.Command) (*string, error) {
+func (lt *ListTask) Execute(command commands.Command) (*string, error) {
 	fmt.Println("listing tasks")
-	task, err := a.parseArgs(command)
+	status, err := lt.parseArgs(command)
 	if err != nil {
 		return nil, fmt.Errorf(tasksListingFailed, err.Error())
 	}
 
 	var tasks []tasks.Task
 	var formattedResult string
-	if task.Status == "" {
-		tasks, err = a.repository.GetAllTasks()
+	if status == nil {
+		tasks, err = lt.repository.GetAllTasks()
+		if err != nil {
+			return nil, fmt.Errorf(tasksListingFailed, err.Error())
+		}
+	} else {
+		tasks, err = lt.repository.GetAllTasksByStatus(*status)
 		if err != nil {
 			return nil, fmt.Errorf(tasksListingFailed, err.Error())
 		}
 	}
-	// TODO: finish status listing and add unit-tests
-	result, err := a.repository.TasksToBytes(tasks)
+	result, err := lt.repository.Format(tasks)
 	formattedResult = string(result)
 	if err != nil {
 		return nil, fmt.Errorf(tasksListingFailed, err.Error())
@@ -41,23 +45,25 @@ func (a *ListTask) Execute(command commands.Command) (*string, error) {
 	return &formattedResult, nil
 }
 
-func (a *ListTask) parseArgs(command commands.Command) (*tasks.Task, error) {
+func (lt *ListTask) parseArgs(command commands.Command) (*tasks.Status, error) {
 	if command.Args() == nil || command.Name() != commands.ListCommand {
 		return nil, errInvalidCommand
 	}
 
 	if len(command.Args()) <= 0 {
-		return &tasks.Task{}, nil
+		return nil, nil
 	}
 
+	var status tasks.Status
 	switch command.Args()[0] {
-	case "done":
-		return &tasks.Task{Status: tasks.Done}, nil
-	case "todo":
-		return &tasks.Task{Status: tasks.Todo}, nil
-	case "in-progress":
-		return &tasks.Task{Status: tasks.InProgress}, nil
+	case tasks.Done.String():
+		status = tasks.Done
+	case tasks.Todo.String():
+		status = tasks.Todo
+	case tasks.InProgress.String():
+		status = tasks.InProgress
 	default:
-		return nil, fmt.Errorf("invalid status: %s", command.Args()[0])
+		return nil, fmt.Errorf("invalid status '%s'", command.Args()[0])
 	}
+	return &status, nil
 }

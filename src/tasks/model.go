@@ -6,6 +6,10 @@ import (
 
 type Status string
 
+func (s Status) String() string {
+	return string(s)
+}
+
 // Task status
 const (
 	Todo       Status = "todo"

@@ -14,7 +14,7 @@ func TestDeleteTask_parseArgs(t *testing.T) {
 		cmdName        commands.CommandName
 		args           []string
 		taskRepository ports.ITaskRepository
-		expected       *tasks.Task
+		expected       uint64
 		wantErr        bool
 	}{
 		{
@@ -22,7 +22,7 @@ func TestDeleteTask_parseArgs(t *testing.T) {
 			cmdName:        "delete",
 			args:           []string{"123"},
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
-			expected:       &tasks.Task{ID: 123},
+			expected:       123,
 			wantErr:        false,
 		},
 		{
@@ -68,7 +68,7 @@ func TestDeleteTask_parseArgs(t *testing.T) {
 			deleteTask := NewDeleteTask(test.taskRepository)
 			got, err := deleteTask.parseArgs(*cmd)
 			assertError(t, err, test.wantErr)
-			assertTask(t, got, test.expected)
+			assertTask(t, &tasks.Task{ID: got}, &tasks.Task{ID: test.expected})
 		})
 	}
 }

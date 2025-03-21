@@ -33,7 +33,7 @@ func (tr *TaskRepository) CreateOne(task Task) (*Task, error) {
 
 	tasks = append(tasks, task)
 
-	data, err := tr.TasksToBytes(tasks)
+	data, err := tr.Format(tasks)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (tr *TaskRepository) DeleteOne(id uint64) error {
 	}
 	tasks = slices.Delete(tasks, taskPosition, taskPosition+1)
 
-	data, err := tr.TasksToBytes(tasks)
+	data, err := tr.Format(tasks)
 	if err != nil {
 		return err
 	}
@@ -74,14 +74,18 @@ func (tr *TaskRepository) UpdateOne(task Task) (*Task, error) {
 	}
 	for i := range tasks {
 		if tasks[i].ID == task.ID {
-			tasks[i].Description = task.Description
-			tasks[i].Status = task.Status
+			if task.Description != "" {
+				tasks[i].Description = task.Description
+			}
+			if task.Status != "" {
+				tasks[i].Status = task.Status
+			}
 			tasks[i].UpdatedAt = time.Now().UTC()
 			break
 		}
 	}
 
-	data, err := tr.TasksToBytes(tasks)
+	data, err := tr.Format(tasks)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +112,23 @@ func (tr *TaskRepository) GetAllTasks() ([]Task, error) {
 	return tasks, nil
 }
 
-func (tr *TaskRepository) TasksToBytes(tasks []Task) ([]byte, error) {
+func (tr *TaskRepository) GetAllTasksByStatus(status Status) ([]Task, error) {
+	tasks, err := tr.GetAllTasks()
+	if err != nil {
+		return nil, fmt.Errorf("error while trying to find tasks: %s", err.Error())
+	}
+
+	var filteredTasks []Task = make([]Task, 0)
+	for _, task := range tasks {
+		if task.Status == status {
+			filteredTasks = append(filteredTasks, task)
+			break
+		}
+	}
+	return filteredTasks, nil
+}
+
+func (tr *TaskRepository) Format(tasks []Task) ([]byte, error) {
 	data, err := json.MarshalIndent(tasks, "", "\t")
 	if err != nil {
 		return nil, fmt.Errorf("error while trying to marshal all tasks: %s", err.Error())

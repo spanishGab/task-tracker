@@ -22,7 +22,7 @@ func TestAddTask_parseArgs(t *testing.T) {
 			cmdName:        "add",
 			args:           []string{"arg1"},
 			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
-			expected:       &tasks.Task{Description: "arg1"},
+			expected:       &tasks.Task{Description: "arg1", Status: tasks.Todo},
 			wantErr:        false,
 		},
 		{

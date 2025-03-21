@@ -23,7 +23,11 @@ func (tr *TaskRepositorySuccessfullMock) GetAllTasks() ([]tasks.Task, error) {
 	return []tasks.Task{}, nil
 }
 
-func (tr *TaskRepositorySuccessfullMock) TasksToBytes(tasks []tasks.Task) ([]byte, error) {
+func (tr *TaskRepositorySuccessfullMock) GetAllTasksByStatus(status tasks.Status) ([]tasks.Task, error) {
+	return []tasks.Task{}, nil
+}
+
+func (tr *TaskRepositorySuccessfullMock) Format(tasks []tasks.Task) ([]byte, error) {
 	return []byte{}, nil
 }
 
@@ -45,6 +49,10 @@ func (tr *TaskRepositoryErrorMock) GetAllTasks() ([]tasks.Task, error) {
 	return nil, fmt.Errorf("could not sarch tasks")
 }
 
-func (tr *TaskRepositoryErrorMock) TasksToBytes(tasks []tasks.Task) ([]byte, error) {
+func (tr *TaskRepositoryErrorMock) GetAllTasksByStatus(status tasks.Status) ([]tasks.Task, error) {
+	return nil, fmt.Errorf("could not sarch tasks")
+}
+
+func (tr *TaskRepositoryErrorMock) Format(tasks []tasks.Task) ([]byte, error) {
 	return nil, fmt.Errorf("could not transform tasks to bytes")
 }
