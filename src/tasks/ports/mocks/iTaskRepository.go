@@ -46,11 +46,11 @@ func (tr *TaskRepositoryErrorMock) UpdateOne(task tasks.Task) (*tasks.Task, erro
 }
 
 func (tr *TaskRepositoryErrorMock) GetAllTasks() ([]tasks.Task, error) {
-	return nil, fmt.Errorf("could not sarch tasks")
+	return nil, fmt.Errorf("could not search tasks")
 }
 
 func (tr *TaskRepositoryErrorMock) GetAllTasksByStatus(status tasks.Status) ([]tasks.Task, error) {
-	return nil, fmt.Errorf("could not sarch tasks")
+	return nil, fmt.Errorf("could not search tasks")
 }
 
 func (tr *TaskRepositoryErrorMock) Format(tasks []tasks.Task) ([]byte, error) {

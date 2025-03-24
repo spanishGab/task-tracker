@@ -9,19 +9,20 @@ import (
 )
 
 var createInvalidCommandError = func(command string, message string) error {
-	return fmt.Errorf("invalid command %s - %s", command, message)
+	return fmt.Errorf("invalid command '%s': %s", command, message)
 
 }
 
-func ReadCommand(input []string, tasksRepository taskports.ITaskRepository) error {
+func HandleCommand(input []string, tasksRepository taskports.ITaskRepository) error {
 	inputLength := len(input)
-	commandName := input[1]
 
 	var useCase generalports.IUseCase
 	var command commands.Command
 	if inputLength < 2 {
 		return commands.ErrInvalidArgs
 	}
+
+	commandName := input[1]
 	switch commandName {
 	case commands.AddCommand.String():
 		command = *commands.NewCommand(commands.AddCommand, input[2:])

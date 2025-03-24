@@ -4,7 +4,7 @@ import (
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
 	"tasktracker/src/tasks/ports"
-	"tasktracker/src/tasks/useCases/mocks"
+	"tasktracker/src/tasks/ports/mocks"
 	"testing"
 )
 

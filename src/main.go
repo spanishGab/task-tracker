@@ -19,7 +19,7 @@ func main() {
 	cwd, _ := os.Getwd()
 	fileHandler := database.NewFileHandler(path.Join(cwd, "src", "database", "tasks.json"))
 	tasksRepository := tasks.NewTaskRepository(fileHandler.FileName, fileHandler)
-	if err := cli.ReadCommand(os.Args, tasksRepository); err != nil {
+	if err := cli.HandleCommand(os.Args, tasksRepository); err != nil {
 		fmt.Println(err)
 	}
 }
