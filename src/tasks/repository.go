@@ -4,17 +4,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
-	"tasktracker/src/ports"
+	"tasktracker/src/database"
 
 	"time"
 )
 
-type TaskRepository struct {
-	DataSource   string
-	dbConnection ports.IFileHandler
+type ITaskRepository interface {
+	CreateOne(task Task) (*Task, error)
+	DeleteOne(id uint64) error
+	UpdateOne(task Task) (*Task, error)
+	GetAllTasks() ([]Task, error)
+	GetAllTasksByStatus(status Status) ([]Task, error)
+	Format(tasks []Task) ([]byte, error)
 }
 
-func NewTaskRepository(dataSource string, dbConnection ports.IFileHandler) *TaskRepository {
+type TaskRepository struct {
+	DataSource   string
+	dbConnection database.IFileHandler
+}
+
+func NewTaskRepository(dataSource string, dbConnection database.IFileHandler) *TaskRepository {
 	return &TaskRepository{
 		DataSource:   dataSource,
 		dbConnection: dbConnection,

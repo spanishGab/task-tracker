@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"strconv"
 	"tasktracker/src/commands"
-	"tasktracker/src/tasks/ports"
+	"tasktracker/src/tasks"
 )
 
 var deleteResult = "Task deleted successfully"
 
 type DeleteTask struct {
-	repository ports.ITaskRepository
+	repository tasks.ITaskRepository
 }
 
-func NewDeleteTask(repository ports.ITaskRepository) *DeleteTask {
+func NewDeleteTask(repository tasks.ITaskRepository) *DeleteTask {
 	return &DeleteTask{
 		repository: repository,
 	}

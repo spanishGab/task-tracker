@@ -2,8 +2,8 @@ package cli
 
 import (
 	"tasktracker/src/commands"
-	"tasktracker/src/tasks/ports"
-	"tasktracker/src/tasks/ports/mocks"
+	"tasktracker/src/tasks"
+	"tasktracker/src/tasks/mocks"
 	"testing"
 )
 
@@ -14,7 +14,7 @@ func TestHandleCommand(t *testing.T) {
 	tests := []struct {
 		name        string
 		input       []string
-		respository ports.ITaskRepository
+		respository tasks.ITaskRepository
 		wantErr     bool
 	}{
 		{

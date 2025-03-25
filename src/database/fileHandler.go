@@ -5,6 +5,11 @@ import (
 	"os"
 )
 
+type IFileHandler interface {
+	Write([]byte) (int, error)
+	Read() ([]byte, error)
+}
+
 const (
 	OwnerRWPermission = 0644
 )

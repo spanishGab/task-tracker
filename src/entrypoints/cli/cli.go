@@ -3,8 +3,8 @@ package cli
 import (
 	"fmt"
 	"tasktracker/src/commands"
-	generalports "tasktracker/src/ports"
-	taskports "tasktracker/src/tasks/ports"
+	"tasktracker/src/contracts"
+	"tasktracker/src/tasks"
 	usecases "tasktracker/src/tasks/useCases"
 )
 
@@ -13,10 +13,10 @@ var createInvalidCommandError = func(command string, message string) error {
 
 }
 
-func HandleCommand(input []string, tasksRepository taskports.ITaskRepository) error {
+func HandleCommand(input []string, tasksRepository tasks.ITaskRepository) error {
 	inputLength := len(input)
 
-	var useCase generalports.IUseCase
+	var useCase contracts.IUseCase
 	var command commands.Command
 	if inputLength < 2 {
 		return commands.ErrInvalidArgs

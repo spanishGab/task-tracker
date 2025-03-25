@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
-	"tasktracker/src/tasks/ports"
 )
 
 const addResult = "Task addeed successfully (ID: %d)"
 
 type AddTask struct {
-	repository ports.ITaskRepository
+	repository tasks.ITaskRepository
 }
 
-func NewAddTask(repository ports.ITaskRepository) *AddTask {
+func NewAddTask(repository tasks.ITaskRepository) *AddTask {
 	return &AddTask{
 		repository: repository,
 	}

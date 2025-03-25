@@ -5,16 +5,15 @@ import (
 	"strconv"
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
-	"tasktracker/src/tasks/ports"
 )
 
 const updateResult = "Task updated successfully (ID: %d)"
 
 type UpdateTask struct {
-	repository ports.ITaskRepository
+	repository tasks.ITaskRepository
 }
 
-func NewUpdateTask(reposotory ports.ITaskRepository) *UpdateTask {
+func NewUpdateTask(reposotory tasks.ITaskRepository) *UpdateTask {
 	return &UpdateTask{
 		repository: reposotory,
 	}

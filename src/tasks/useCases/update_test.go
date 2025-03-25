@@ -3,8 +3,7 @@ package usecases
 import (
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
-	"tasktracker/src/tasks/ports"
-	"tasktracker/src/tasks/ports/mocks"
+	"tasktracker/src/tasks/mocks"
 	"testing"
 )
 
@@ -12,7 +11,7 @@ func TestUpdateTask_parseArgs(t *testing.T) {
 	tests := []struct {
 		name           string
 		command        *commands.Command
-		taskRepository ports.ITaskRepository
+		taskRepository tasks.ITaskRepository
 		expected       *tasks.Task
 		wantErr        bool
 	}{

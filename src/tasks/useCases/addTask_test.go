@@ -3,8 +3,8 @@ package usecases
 import (
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
-	"tasktracker/src/tasks/ports"
-	"tasktracker/src/tasks/ports/mocks"
+	"tasktracker/src/tasks/mocks"
+
 	"testing"
 )
 
@@ -13,7 +13,7 @@ func TestAddTask_parseArgs(t *testing.T) {
 		name           string
 		cmdName        commands.CommandName
 		args           []string
-		taskRepository ports.ITaskRepository
+		taskRepository tasks.ITaskRepository
 		expected       *tasks.Task
 		wantErr        bool
 	}{

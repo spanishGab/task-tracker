@@ -1,4 +1,4 @@
-package ports
+package contracts
 
 import "tasktracker/src/commands"
 

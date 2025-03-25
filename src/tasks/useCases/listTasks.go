@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
-	"tasktracker/src/tasks/ports"
 )
 
 type ListTask struct {
-	repository ports.ITaskRepository
+	repository tasks.ITaskRepository
 }
 
-func NewListTask(repository ports.ITaskRepository) *ListTask {
+func NewListTask(repository tasks.ITaskRepository) *ListTask {
 	return &ListTask{
 		repository: repository,
 	}
