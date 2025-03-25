@@ -9,7 +9,7 @@ import (
 
 func TestHandleCommand(t *testing.T) {
 	successMockRepo := new(mocks.TaskRepositorySuccessfullMock)
-	errorMockRepo := new(mocks.TaskRepositoryErrorMock)
+	errorMockRepo := new(mocks.TaskRepositoryFailureMock)
 
 	tests := []struct {
 		name        string

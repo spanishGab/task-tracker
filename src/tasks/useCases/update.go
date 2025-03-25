@@ -21,7 +21,7 @@ func NewUpdateTask(reposotory tasks.ITaskRepository) *UpdateTask {
 
 func (u *UpdateTask) Execute(command commands.Command) (*string, error) {
 	fmt.Println("executing update")
-	task, err := u.parseArgs(command)
+	task, err := u.parseCommand(command)
 	if err != nil {
 		return nil, fmt.Errorf("error while updating task: %s", err.Error())
 	}
@@ -33,7 +33,7 @@ func (u *UpdateTask) Execute(command commands.Command) (*string, error) {
 	return &result, nil
 }
 
-func (u *UpdateTask) parseArgs(command commands.Command) (*tasks.Task, error) {
+func (u *UpdateTask) parseCommand(command commands.Command) (*tasks.Task, error) {
 	if command.Args() == nil || len(command.Args()) < 1 {
 		return nil, errInvalidCommand
 	}

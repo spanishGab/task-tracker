@@ -21,7 +21,7 @@ func NewDeleteTask(repository tasks.ITaskRepository) *DeleteTask {
 
 func (d *DeleteTask) Execute(command commands.Command) (*string, error) {
 	fmt.Println("executing delete")
-	id, err := d.parseArgs(command)
+	id, err := d.parseCommand(command)
 	if err != nil {
 		return nil, fmt.Errorf(taskDeletionFailed, err.Error())
 	}
@@ -32,7 +32,7 @@ func (d *DeleteTask) Execute(command commands.Command) (*string, error) {
 	return &deleteResult, nil
 }
 
-func (d *DeleteTask) parseArgs(command commands.Command) (uint64, error) {
+func (d *DeleteTask) parseCommand(command commands.Command) (uint64, error) {
 	if command.Args() == nil ||
 		len(command.Args()) != 1 ||
 		command.Name() != commands.DeleteCommand {

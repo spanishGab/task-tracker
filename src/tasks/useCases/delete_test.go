@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestDeleteTask_parseArgs(t *testing.T) {
+func TestDeleteTask_parseCommand(t *testing.T) {
 	tests := []struct {
 		name           string
 		cmdName        commands.CommandName
@@ -65,9 +65,54 @@ func TestDeleteTask_parseArgs(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			cmd := commands.NewCommand(test.cmdName, test.args)
 			deleteTask := NewDeleteTask(test.taskRepository)
-			got, err := deleteTask.parseArgs(*cmd)
+			got, err := deleteTask.parseCommand(*cmd)
 			assertError(t, err, test.wantErr)
 			assertTask(t, &tasks.Task{ID: got}, &tasks.Task{ID: test.expected})
+		})
+	}
+}
+func TestDeleteTask_Execute(t *testing.T) {
+	tests := []struct {
+		name           string
+		cmdName        commands.CommandName
+		args           []string
+		taskRepository tasks.ITaskRepository
+		expected       *string
+		wantErr        bool
+	}{
+		{
+			name:           "should delete a task successfully",
+			cmdName:        "delete",
+			args:           []string{"123"},
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			expected:       &deleteResult,
+			wantErr:        false,
+		},
+		{
+			name:           "should return an error when failing to parse the given command",
+			cmdName:        "delete",
+			args:           []string{"abc"},
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			wantErr:        true,
+		},
+		{
+			name:           "should return an error when repository fails to delete",
+			cmdName:        "delete",
+			args:           []string{"123"},
+			taskRepository: &mocks.TaskRepositoryFailureMock{},
+			wantErr:        true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			cmd := commands.NewCommand(test.cmdName, test.args)
+			deleteTask := NewDeleteTask(test.taskRepository)
+			got, err := deleteTask.Execute(*cmd)
+			assertError(t, err, test.wantErr)
+			if !test.wantErr {
+				assertResultString(t, got, test.expected)
+			}
 		})
 	}
 }

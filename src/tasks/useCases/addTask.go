@@ -20,7 +20,7 @@ func NewAddTask(repository tasks.ITaskRepository) *AddTask {
 
 func (a *AddTask) Execute(command commands.Command) (*string, error) {
 	fmt.Println("executing add")
-	task, err := a.parseArgs(command)
+	task, err := a.parseCommand(command)
 	if err != nil {
 		return nil, fmt.Errorf(taskCreationFailed, err.Error())
 	}
@@ -32,7 +32,7 @@ func (a *AddTask) Execute(command commands.Command) (*string, error) {
 	return &result, nil
 }
 
-func (a *AddTask) parseArgs(command commands.Command) (*tasks.Task, error) {
+func (a *AddTask) parseCommand(command commands.Command) (*tasks.Task, error) {
 	if command.Args() == nil ||
 		len(command.Args()) != 1 ||
 		command.Name() != commands.AddCommand {

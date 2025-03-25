@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"fmt"
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
 	"tasktracker/src/tasks/mocks"
@@ -8,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestAddTask_parseArgs(t *testing.T) {
+func TestAddTask_parseCommand(t *testing.T) {
 	tests := []struct {
 		name           string
 		cmdName        commands.CommandName
@@ -59,10 +60,64 @@ func TestAddTask_parseArgs(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			cmd := commands.NewCommand(test.cmdName, test.args)
 			addTask := NewAddTask(test.taskRepository)
-			got, err := addTask.parseArgs(*cmd)
+			got, err := addTask.parseCommand(*cmd)
 			assertError(t, err, test.wantErr)
 			assertTask(t, got, test.expected)
 		})
+	}
+}
+func TestAddTask_Execute(t *testing.T) {
+	tests := []struct {
+		name           string
+		cmdName        commands.CommandName
+		args           []string
+		taskRepository tasks.ITaskRepository
+		expectedResult *string
+		wantErr        bool
+	}{
+		{
+			name:           "should add a task successfully",
+			cmdName:        "add",
+			args:           []string{"arg1"},
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			expectedResult: func() *string { s := fmt.Sprintf(addResult, 0); return &s }(),
+			wantErr:        false,
+		},
+		{
+			name:           "should return an error when failing to parse the given command",
+			cmdName:        "create",
+			args:           []string{"123"},
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			wantErr:        true,
+		},
+		{
+			name:           "should return an error when repository fails",
+			cmdName:        "add",
+			args:           []string{"arg1"},
+			taskRepository: &mocks.TaskRepositoryFailureMock{},
+			wantErr:        true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			cmd := commands.NewCommand(test.cmdName, test.args)
+			addTask := NewAddTask(test.taskRepository)
+			got, err := addTask.Execute(*cmd)
+			assertError(t, err, test.wantErr)
+			assertResultString(t, got, test.expectedResult)
+		})
+	}
+}
+
+func assertResultString(t testing.TB, got, expected *string) {
+	t.Helper()
+	if expected == nil {
+		if got != nil {
+			t.Errorf("expected: %#v, got: %#v", expected, got)
+		}
+	} else if *expected != *got {
+		t.Errorf("expected: %s, got: %s", *expected, *got)
 	}
 }
 

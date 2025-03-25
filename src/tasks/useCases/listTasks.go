@@ -6,6 +6,10 @@ import (
 	"tasktracker/src/tasks"
 )
 
+const (
+	emptyTasksResult = "No tasks to list"
+)
+
 type ListTask struct {
 	repository tasks.ITaskRepository
 }
@@ -18,13 +22,12 @@ func NewListTask(repository tasks.ITaskRepository) *ListTask {
 
 func (lt *ListTask) Execute(command commands.Command) (*string, error) {
 	fmt.Println("listing tasks")
-	status, err := lt.parseArgs(command)
+	status, err := lt.parseCommand(command)
 	if err != nil {
 		return nil, fmt.Errorf(tasksListingFailed, err.Error())
 	}
 
 	var tasks []tasks.Task
-	var formattedResult string
 	if status == nil {
 		tasks, err = lt.repository.GetAllTasks()
 		if err != nil {
@@ -37,14 +40,18 @@ func (lt *ListTask) Execute(command commands.Command) (*string, error) {
 		}
 	}
 	result, err := lt.repository.Format(tasks)
-	formattedResult = string(result)
+
+	formattedResult := emptyTasksResult
+	if len(result) > 0 {
+		formattedResult = string(result)
+	}
 	if err != nil {
 		return nil, fmt.Errorf(tasksListingFailed, err.Error())
 	}
 	return &formattedResult, nil
 }
 
-func (lt *ListTask) parseArgs(command commands.Command) (*tasks.Status, error) {
+func (lt *ListTask) parseCommand(command commands.Command) (*tasks.Status, error) {
 	if command.Args() == nil || command.Name() != commands.ListCommand {
 		return nil, errInvalidCommand
 	}

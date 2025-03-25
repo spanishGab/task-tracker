@@ -3,10 +3,11 @@ package usecases
 import (
 	"tasktracker/src/commands"
 	"tasktracker/src/tasks"
+	"tasktracker/src/tasks/mocks"
 	"testing"
 )
 
-func TestListTask_parseArgs(t *testing.T) {
+func TestListTask_parseCommand(t *testing.T) {
 	done := tasks.Done
 	todo := tasks.Todo
 	inProgress := tasks.InProgress
@@ -72,7 +73,7 @@ func TestListTask_parseArgs(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			cmd := commands.NewCommand(test.cmdName, test.args)
 			listTask := NewListTask(nil)
-			got, err := listTask.parseArgs(*cmd)
+			got, err := listTask.parseCommand(*cmd)
 			if (err != nil) != test.wantErr {
 				t.Errorf("error = %v, wantErr? %v", err, test.wantErr)
 				return
@@ -86,6 +87,68 @@ func TestListTask_parseArgs(t *testing.T) {
 			} else if got != nil {
 				t.Errorf("got = %v, expected a nil value", got)
 			}
+		})
+	}
+}
+
+func TestListTask_Execute(t *testing.T) {
+	emptyResult := emptyTasksResult
+
+	tests := []struct {
+		name           string
+		command        *commands.Command
+		taskRepository tasks.ITaskRepository
+		expectedResult *string
+		wantErr        bool
+	}{
+		{
+			name:           "should list all tasks succeessfully for a list command",
+			command:        commands.NewCommand(commands.ListCommand, []string{}),
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			expectedResult: &emptyResult,
+			wantErr:        false,
+		},
+		{
+			name:           "shouls list all tasks succeessfully for a list done command",
+			command:        commands.NewCommand(commands.ListCommand, []string{tasks.Done.String()}),
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			expectedResult: &emptyResult,
+			wantErr:        false,
+		},
+		{
+			name:           "shouls list all tasks succeessfully for a list todo command",
+			command:        commands.NewCommand(commands.ListCommand, []string{tasks.Todo.String()}),
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			expectedResult: &emptyResult,
+			wantErr:        false,
+		},
+		{
+			name:           "shouls list all tasks succeessfully for a list in-progress command",
+			command:        commands.NewCommand(commands.ListCommand, []string{tasks.InProgress.String()}),
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			expectedResult: &emptyResult,
+			wantErr:        false,
+		},
+		{
+			name:           "should return an error when failing to parse the given command",
+			command:        commands.NewCommand(commands.CommandName("lis"), []string{}),
+			taskRepository: &mocks.TaskRepositorySuccessfullMock{},
+			wantErr:        true,
+		},
+		{
+			name:           "should return an error when repository fails to update",
+			command:        commands.NewCommand(commands.ListCommand, []string{"123"}),
+			taskRepository: &mocks.TaskRepositoryFailureMock{},
+			wantErr:        true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			updateTask := NewListTask(test.taskRepository)
+			got, err := updateTask.Execute(*test.command)
+			assertError(t, err, test.wantErr)
+			assertResultString(t, got, test.expectedResult)
 		})
 	}
 }

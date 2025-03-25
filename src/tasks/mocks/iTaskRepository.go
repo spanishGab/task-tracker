@@ -31,28 +31,28 @@ func (tr *TaskRepositorySuccessfullMock) Format(tasks []tasks.Task) ([]byte, err
 	return []byte{}, nil
 }
 
-type TaskRepositoryErrorMock struct{}
+type TaskRepositoryFailureMock struct{}
 
-func (tr *TaskRepositoryErrorMock) CreateOne(task tasks.Task) (*tasks.Task, error) {
+func (tr *TaskRepositoryFailureMock) CreateOne(task tasks.Task) (*tasks.Task, error) {
 	return nil, fmt.Errorf("could not create task")
 }
 
-func (tr *TaskRepositoryErrorMock) DeleteOne(id uint64) error {
+func (tr *TaskRepositoryFailureMock) DeleteOne(id uint64) error {
 	return fmt.Errorf("could not delete task")
 }
 
-func (tr *TaskRepositoryErrorMock) UpdateOne(task tasks.Task) (*tasks.Task, error) {
+func (tr *TaskRepositoryFailureMock) UpdateOne(task tasks.Task) (*tasks.Task, error) {
 	return nil, fmt.Errorf("could not update task")
 }
 
-func (tr *TaskRepositoryErrorMock) GetAllTasks() ([]tasks.Task, error) {
+func (tr *TaskRepositoryFailureMock) GetAllTasks() ([]tasks.Task, error) {
 	return nil, fmt.Errorf("could not search tasks")
 }
 
-func (tr *TaskRepositoryErrorMock) GetAllTasksByStatus(status tasks.Status) ([]tasks.Task, error) {
+func (tr *TaskRepositoryFailureMock) GetAllTasksByStatus(status tasks.Status) ([]tasks.Task, error) {
 	return nil, fmt.Errorf("could not search tasks")
 }
 
-func (tr *TaskRepositoryErrorMock) Format(tasks []tasks.Task) ([]byte, error) {
+func (tr *TaskRepositoryFailureMock) Format(tasks []tasks.Task) ([]byte, error) {
 	return nil, fmt.Errorf("could not transform tasks to bytes")
 }
