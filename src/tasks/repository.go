@@ -146,7 +146,7 @@ func (tr *TaskRepository) Format(tasks []Task) ([]byte, error) {
 }
 
 func (tr *TaskRepository) getNextId(tasks []Task) uint64 {
-	var biggestID uint64 = 1
+	var biggestID uint64 = 0
 	for _, task := range tasks {
 		if task.ID > biggestID {
 			biggestID = task.ID

@@ -6,6 +6,7 @@ import (
 )
 
 type IFileHandler interface {
+	CreatFile()
 	Write([]byte) (int, error)
 	Read() ([]byte, error)
 }
@@ -21,6 +22,14 @@ type FileHandler struct {
 func NewFileHandler(fileName string) *FileHandler {
 	return &FileHandler{
 		FileName: fileName,
+	}
+}
+
+// CreateFile creates the file if it does not exist
+func (dbc *FileHandler) CreatFile() {
+	_, err := os.OpenFile(dbc.FileName, os.O_CREATE, 0666)
+	if err != nil {
+		panic(fmt.Sprintf("error while initializing the system: %s", err.Error()))
 	}
 }
 

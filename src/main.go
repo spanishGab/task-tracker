@@ -16,8 +16,10 @@ func main() {
 		fmt.Println(commands.ErrInvalidArgs)
 		return
 	}
-	cwd, _ := os.Getwd()
+	cwd := os.Getenv("CWD")
 	fileHandler := database.NewFileHandler(path.Join(cwd, "src", "database", "tasks.json"))
+	fileHandler.CreatFile()
+
 	tasksRepository := tasks.NewTaskRepository(fileHandler.FileName, fileHandler)
 	if err := cli.HandleCommand(os.Args, tasksRepository); err != nil {
 		fmt.Println(err)

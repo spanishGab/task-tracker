@@ -10,7 +10,8 @@
             "request": "launch",
             "mode": "auto",
             "program": "./src/main.go",
-            "args": ["list", "progress"]
+            "args": ["add", "Example task"],
+            "envFile": "${cwd}/.env"
         }
     ]
 }

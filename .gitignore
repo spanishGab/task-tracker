@@ -1,2 +1,3 @@
-**/tasks.json
-task-cli
+**/database/tasks.json
+**/task-cli
+.env
