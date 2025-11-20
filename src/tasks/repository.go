@@ -138,7 +138,7 @@ func (tr *TaskRepository) GetAllTasksByStatus(status Status) ([]Task, error) {
 }
 
 func (tr *TaskRepository) Format(tasks []Task) ([]byte, error) {
-	data, err := json.MarshalIndent(tasks, "", "\t")
+	data, err := json.MarshalIndent(tasks, "", "  ")
 	if err != nil {
 		return nil, fmt.Errorf("error while trying to marshal all tasks: %s", err.Error())
 	}

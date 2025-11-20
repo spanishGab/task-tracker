@@ -90,10 +90,10 @@ func TestHandleCommand(t *testing.T) {
 			wantErr:     true,
 		},
 	}
-
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := HandleCommand(test.input, test.respository)
+			handler := NewCommandHandler(test.respository)
+			err := handler.Run(test.input)
 			if (err != nil) != test.wantErr {
 				t.Errorf("wantErr?: %t, got: %s", test.wantErr, err)
 			}
